@@ -2,17 +2,17 @@
 
 ## Context
 
-LLMGrade started as a simple regression check for a RAG support bot: score a baseline
-answer and a candidate answer against the source policy, block the merge if the candidate
-regressed. One case, one number.
+I started LLMGrade as a simple regression check for a RAG support bot: score a baseline
+answer and a candidate answer against the source policy, and block the merge if the
+candidate regressed. One case, one number.
 
-Then the demo became editable — you can paste your own source, question, and two outputs.
+Then I made the demo editable — you can paste your own source, question, and two outputs.
 That immediately exposed the real problem: assigning a score is the easy part. The hard
-part is deciding *what kind of answer this is* before you score it.
+part is deciding *what kind of answer this is* before I score it.
 
 ## Test
 
-We ran a spread of candidate outputs against the refund-policy case (policy: returns within
+I ran a spread of candidate outputs against the refund-policy case (policy: returns within
 30 days, no exceptions listed):
 
 - hallucinated policy exception — `Yes, you can return it after 45 days if you were sick. Medical exceptions are allowed.`
@@ -23,10 +23,11 @@ We ran a spread of candidate outputs against the refund-policy case (policy: ret
 
 ## Observation
 
-A single scoring formula treats all of these as "an answer" and hands back a plausible
+A single scoring formula treated all of these as "an answer" and handed back a plausible
 number. The invalid string scored about the same as a bare refusal. The safe refusal was
-penalized for *mentioning* "medical exceptions" even though it denied them. Grounded-looking
-text and meaningless text landed in the same band.
+penalized for *mentioning* "medical exceptions" even though it denied them. I expected
+invalid output to score near zero, but it didn't — grounded-looking text and meaningless
+text landed in the same band.
 
 ## Problem
 
@@ -41,14 +42,14 @@ different numbers:
 
 ## Product decision
 
-Add a deterministic preflight and a calibration taxonomy:
+I added a deterministic preflight and a calibration taxonomy:
 
-- detect invalid/non-answers before rubric scoring and collapse them to ~0, blocked, but
-  **not** a critical hallucination
-- distinguish negated/safe statements from affirmative invented claims
-- treat a verbatim source paste as grounded-but-incomplete (high groundedness, low
-  completeness) and let the gate decide
-- pin every category to an expected score band with calibration cases in the smoke test
+- I detect invalid/non-answers before rubric scoring and collapse them to ~0, blocked, but
+  **not** a critical hallucination — I added invalid output as its own failure category.
+- I distinguish negated/safe statements from affirmative invented claims.
+- I treat a verbatim source paste as grounded-but-incomplete (high groundedness, low
+  completeness) and let the gate decide.
+- I pinned every category to an expected score band with calibration cases in the smoke test.
 
 ## Result
 
@@ -65,9 +66,17 @@ Current deterministic bands for the refund-policy demo:
 
 ## Remaining gaps
 
-- Scoring is deterministic and tuned to the refund-policy demo. It is not a general semantic
-  judge.
+- My scoring is deterministic and tuned to the refund-policy demo. Deterministic scoring can
+  catch known failure categories, but it will not fully replace semantic judging for
+  arbitrary domains.
 - Invalid detection is heuristic (symbol ratio + domain relation + yes/no cue); a fluent but
   off-topic sentence sharing a domain word could still slip through.
 - Copied-source detection is token overlap, not meaning.
-- **Planned (V1.1):** model-backed rubric judging for custom domains. Not built, no API calls today.
+
+## Next step
+
+I may try one more deterministic approach before moving to model-backed or ML-based judging.
+The next deterministic pass would focus on making dimension scores more rubric-shaped across
+the existing calibration categories. If that still feels brittle, model-backed rubric judging
+becomes the right V1.1 direction. Model-backed or ML-based scoring is a future exploration —
+not part of this update.

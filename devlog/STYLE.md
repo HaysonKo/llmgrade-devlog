@@ -1,12 +1,13 @@
 # Devlog style
 
-Write in a cut-and-dry GitHub devlog style.
+Write in first person singular — this is my running log.
 
-- Prefer short sections, bullets, concrete examples, and command snippets.
-- Focus on: what changed, what was tested, what failed, what decision followed, and what
-  remains unresolved.
+- Use **"I"** when describing product decisions, tests, observations, and next steps.
+- Keep the tone direct, concise, and product-focused.
+- Prefer concrete examples over broad claims.
+- Focus on what I tested, what failed, what I changed, and what remains unresolved.
+- Keep scope explicit: what works today, what is planned, and what is not supported yet.
 - Avoid hype, broad claims, and generic AI marketing language.
-- Make scope explicit: what works today, what is planned, and what is not supported yet.
 
 ## Suggested post structure
 
