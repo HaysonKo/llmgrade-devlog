@@ -1,5 +1,16 @@
 # LLMGrade devlog
 
+LLMGrade is an independent prototype for exploring product-specific LLM evaluation. The current
+public demo uses deterministic scoring so the evaluation contract is inspectable: source facts,
+rubric axes, baseline behavior, candidate behavior, hard failure rules, and merge-blocking logic.
+
+The proper next step is model-backed rubric judging, human review, or both, especially for
+subjective qualities like helpfulness, tone, reasoning quality, and policy nuance. This version
+starts deterministic to understand the product workflow before adding another model into the
+evaluation loop.
+
+---
+
 LLMGrade explores **app-specific evals for LLM applications** — catching product-behavior
 regressions before merge.
 
